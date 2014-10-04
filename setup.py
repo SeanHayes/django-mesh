@@ -51,5 +51,6 @@ setup(name='django-mesh',
 
     tests_require=['django-admin-smoke-tests>=0.1.9', 'mock', 'django-settings-context-processor',],
 
+
     test_suite='setup.runtests',
 )

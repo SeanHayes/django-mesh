@@ -23,10 +23,19 @@ from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
+import json
 
 # App imports
-from .models import Channel, Post, Tag
+from .models import Channel, Post, Tag, File
+
+#test upload
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.core.urlresolvers import reverse, resolve
+
+
+from .forms import UploadForm
 
 logger = logging.getLogger(__name__)
 
@@ -94,15 +103,6 @@ class PostDetailView(DetailView):
         ret = super(PostDetailView, self).get_queryset(*args, **kwargs)
         return ret.get_for_user(user=self.request.user).active()
 
-def self_enrollment(request, *args, **kwargs):
-    user = request.user
-    if request.method == 'POST':
-        channel = get_object_or_404(Channel.objects.get_for_user(user), slug=kwargs['slug'])
-        channel.followers.add(user)
-        return HttpResponseRedirect(reverse('mesh_channel_index'))
-    else:
-        return HttpResponseRedirect(reverse('mesh_channel_index'))
-
 class TagDetailView(ListView):
     model = Post
     template_name = 'django_mesh/tag_view.html'
@@ -136,3 +136,66 @@ class TagIndexView(ListView):
     def get_queryset(self, *args, **kwargs):
         qs = super(TagIndexView, self).get_queryset(*args, **kwargs)
         return qs.get_for_user(self.request.user)
+
+class FileDetailView(DetailView):
+    model = File
+    template_name = 'django_mesh/file_view.html'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(FileDetailView, self).get_queryset(*args, **kwargs)
+        return qs.get_for_user(self.request.user)
+
+
+class FileIndexView(ListView):
+    model = File
+    template_name = 'django_mesh/file_index_view.html'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(FileIndexView, self).get_queryset(*args, **kwargs)
+        return qs.get_for_user(self.request.user)
+
+def self_enrollment(request, *args, **kwargs):
+    user = request.user
+    if request.method == 'POST':
+        channel = get_object_or_404(Channel.objects.get_for_user(user), slug=kwargs['slug'])
+        channel.followers.add(user)
+        return HttpResponseRedirect(reverse('mesh_channel_index'))
+    else:
+        return HttpResponseRedirect(reverse('mesh_channel_index'))
+
+class OembedDetailView(DetailView):
+
+    model = File
+
+    def dispatch(self, request, *args, **kwargs):
+        self.file = get_object_or_404(File.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+
+        if request.method == 'POST':
+            raise Http404
+        else:
+            user = request.user
+
+            json_response = []
+
+            file_dict = {}
+
+            if self.file.media_type == 1:
+                file_dict['type'] = 'photo'
+                file_dict['width'] = 240
+                file_dict['height'] = 160
+
+            elif self.file.media_type == 2:
+                file_dict['type'] = 'video'
+                file_dict['html'] = self.file.upload_embed_link
+                file_dict['height'] = 350
+                file_dict['width'] = 700
+
+            file_dict['version'] = 1.0
+            file_dict['title'] = self.file.name_of_file
+            file_dict['url'] = self.file.upload_url
+            file_dict['provider_name'] = 'Django_Mesh'
+            json_response.append(file_dict)
+            return HttpResponse(json.dumps(json_response), content_type="application/json")
+
+        response = super(OembedDetailView, self).dispatch(request, *args, **kwargs)
+        return response

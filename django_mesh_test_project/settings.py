@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.sitemaps',
     'django.contrib.sites',
     #app that we want to test
+    'django.contrib.webdesign',
     'django_mesh',
     'settings_context_processor',
 )
@@ -89,12 +90,18 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_URL = '/static/'
 STATIC_PATH = os.path.join(PROJECT_ROOT, 'static')
-
+STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-     STATIC_PATH,
-    )
+    STATIC_PATH,
+)
+
+MEDIA_PATH = os.path.join(PROJECT_ROOT, 'media')
+MEDIA_URL = '/media/'
+MEDIAFILES_DIRS = (
+    MEDIA_PATH,
+)
+
 SITE_ID = 1
 
 TEMPLATE_DIRS = (

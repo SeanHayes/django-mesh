@@ -17,7 +17,7 @@
 #Django imports
 from django.conf.urls import patterns, url
 
-from .views import IndexView, ChannelIndexView, ChannelDetailView, PostIndexView, PostDetailView, TagDetailView, TagIndexView
+from .views import IndexView, ChannelIndexView, ChannelDetailView, PostIndexView, PostDetailView, TagDetailView, TagIndexView, FileDetailView, FileIndexView, OembedDetailView
 from django_mesh import views
 
 urlpatterns = patterns('',
@@ -26,7 +26,10 @@ urlpatterns = patterns('',
     url(r'^channels/(?P<slug>.*)/$', ChannelDetailView.as_view(), name="mesh_channel_view"),
     url(r'^follow/(?P<slug>.*)/$', views.self_enrollment, name="mesh_follow_channel"),
     url(r'^posts/$', PostIndexView.as_view(), name="mesh_post_index"),
-    url(r'^tags/(?P<slug>.*)/$' , TagDetailView.as_view(), name="mesh_tag_view"),
-    url(r'^posts/(?P<slug>.*)/$', PostDetailView.as_view(), name="mesh_post_view"),
+    url(r'^posts/(?P<slug>.+)/$', PostDetailView.as_view(), name="mesh_post_view"),
     url(r'^tags/$', TagIndexView.as_view(), name="mesh_tag_index"),
+    url(r'^tags/(?P<slug>.+)/$', TagDetailView.as_view(), name="mesh_tag_view"),
+    url(r'^file/$', FileIndexView.as_view(), name="mesh_file_index"),
+    url(r'^file/(?P<slug>.+)/$', FileDetailView.as_view(), name="mesh_file_view"),
+    url(r'^oembed/file/(?P<slug>.+)/$', OembedDetailView.as_view(), name="mesh_oembed"),
 )

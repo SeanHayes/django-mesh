@@ -16,6 +16,7 @@
 
 # Test imports
 from .util import BaseTestCase
+
 import markdown, textile
 import requests
 from pyembed.markdown import PyEmbedMarkdown
@@ -25,6 +26,9 @@ from .youtube_data import get_mock, get_mock_no_oembed
 from django.core.urlresolvers import reverse
 
 from mock import patch, Mock
+
+from django.core.files import File
+from django.core.files.storage import Storage
 
 
 
