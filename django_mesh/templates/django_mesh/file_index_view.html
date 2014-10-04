@@ -1,0 +1,23 @@
+{% extends "django_mesh/base.html" %}
+
+{% block content %}
+
+<div class="file_list">
+{% if file_list %}
+
+    {% for file in file_list %}
+        <div>
+            <a href="{% url 'mesh_file_view' slug=file.slug %}">{{ file.name_of_file|safe }}</a>
+            <div class="container2">
+
+            <p> <embed src="{{ file.upload_url }}" autoplay="false" height="120" width="200">
+            </p>
+        </div></div>
+    {% endfor %}
+
+{% else %}
+    There are no files to display.
+{% endif %}
+</div>
+
+{% endblock content %}

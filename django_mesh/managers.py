@@ -50,3 +50,13 @@ class TagQuerySet(QuerySet):
             q_object = Q(post__channel__followers=user.id) | q_object
 
         return self.filter(q_object).distinct().filter(post__published__lte=timezone.now())
+
+class FileQuerySet(QuerySet):
+    def get_for_user(self, user):
+
+        q_object = Q(channel__public=True)
+
+        if user.id is not None:
+            q_object = Q(channel__followers=user.id) | q_object
+
+        return self.filter(q_object).distinct()
