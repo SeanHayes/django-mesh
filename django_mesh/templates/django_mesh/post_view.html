@@ -1,10 +1,13 @@
 {% extends "django_mesh/base.html" %}
+{% load webdesign %} 
 {% block content %}
 
-<h2>{{ post.title }}</h2>
+<h2><font color='black'><em><strong>{{ post.title }}</strong></em></font></h2>
+<hr class="featurette-divider-2">
 
 <div class="post">
-    {{ post.rendered_text }}
+    {% lorem 3 p %}
+    {{ post.rendered_text|safe }}
 </div>
 
 <div class="tag_list">

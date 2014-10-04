@@ -46,7 +46,7 @@ class _Abstract(models.Model):     #microblog compatible.
         return '%(spacing)s<a href="%(url)s">%(url)s</a>' % gd
 
     def render(self):
-        #TODO: strip out dangerous HTML attributes, only allow basic formatting tags
+
         self.rendered_text = oembed_regex.sub(self.get_oembed_markup, self.text)
 
     def save(self, *args, **kwargs):
@@ -54,11 +54,6 @@ class _Abstract(models.Model):     #microblog compatible.
             self.render()
 
         super(_Abstract, self).save(*args, **kwargs)
-#        try:
-#            ping_google()
-#        except Exception:
-#            # Bare 'except' because we could get a variety of HTTP-related exceptions.
-#            pass
 
     def __str__(self):
         return self.title

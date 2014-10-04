@@ -1,4 +1,5 @@
 {% extends "django_mesh/base.html" %}
+{% load webdesign %} 
 {% block content %}
 
 <div class="tag_list">
@@ -7,7 +8,10 @@
     {% for tag in tag_list %}
         <div>
             <a href="{% url 'mesh_tag_view' slug=tag.slug %}">{{ tag.title }}</a>
-        </div>
+            <div class="container2">
+            <p class="summary">{{ tag.rendered_text }}
+            {% lorem 5 w random %}</p>
+        </div></div>
     {% endfor %}
 
 {% else %}
