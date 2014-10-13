@@ -74,7 +74,6 @@ class PostTestCase(BaseTestCase):
         self.p1.channel = self.c1
         self.p1.save()
 
-
         returned_title = str(self.p1)
         self.assertEqual(self.p1.title, returned_title)
 
