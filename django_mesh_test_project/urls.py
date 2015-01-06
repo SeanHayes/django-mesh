@@ -1,14 +1,14 @@
 from django.conf.urls import patterns, include, url
 
-from .sitemaps import PostSitemaps, ChannelSitemaps, TagSitemaps
+from .sitemaps import PostSitemap, ChannelSitemap, TagSitemap
 from django.contrib.sitemaps.views import sitemap
 from django.contrib import admin
 admin.autodiscover()
 
 sitemaps = {
-    'post':PostSitemaps,
-    'channel':ChannelSitemaps,
-    'tag':TagSitemaps
+    'post':PostSitemap,
+    'channel':ChannelSitemap,
+    'tag':TagSitemap
 }
 
 urlpatterns = patterns('',

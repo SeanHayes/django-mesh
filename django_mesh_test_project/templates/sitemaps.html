@@ -26,10 +26,12 @@
             {% if url.item.title %}<news:title>{{ url.item.title }}</news:title>{% endif %}
 
             {% if url.item.author %}
+            {% for site in sites %}
                 <news:publication>
-                <news:name> Django Mesh Publication </news:name>
+                <news:name> {{ site.name }} </news:name>
                 <news:language>en</news:language>
                 </news:publication>
+            {% endfor %}
             {% endif %}
 
         </news:news>
