@@ -1,13 +1,20 @@
 {% extends "django_mesh/base.html" %}
+{% load webdesign %}
 {% block content %}
 
 <div class="channel_list">
 {% if channel_list %}
 
     {% for channel in channel_list %}
+
         <div>
             <a href="{% url 'mesh_channel_view' slug=channel.slug %}">{{ channel.title }}</a>
-        </div>
+
+            <div class="container2">
+            <p class="summary">{{ channel.rendered_text }}
+            {% lorem 5 w random %}</p>
+
+        </div></div>
     {% endfor %}
     {% include 'django_mesh/pagination.html' with page_obj=page_obj paginator=paginator only %}
 

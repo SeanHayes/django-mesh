@@ -17,7 +17,6 @@ Depends on
 * django-model-utils
 * python-pytz
 
-
 Huboard
 -------
 
