@@ -45,7 +45,7 @@ class PostAdmin(admin.ModelAdmin):
 admin.site.register(Post, PostAdmin)
 
 class FileAdmin(admin.ModelAdmin):
-    list_display = ('name_of_file', 'media_type')
+    list_display = ('title', 'media_type')
 
 admin.site.register(File, FileAdmin)
 

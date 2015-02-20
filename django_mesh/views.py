@@ -24,6 +24,8 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.contrib.sites.shortcuts import get_current_site
+
 import json
 
 # App imports
@@ -167,35 +169,32 @@ class OembedDetailView(DetailView):
 
     model = File
 
+    @property
+    def get_site_domain(request):
+        return get_current_site(request).domain
+
+
     def dispatch(self, request, *args, **kwargs):
         self.file = get_object_or_404(File.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
 
-        if request.method == 'POST':
-            raise Http404
-        else:
-            user = request.user
+        user = request.user
 
-            json_response = []
+        file_dict = {}
 
-            file_dict = {}
+        file_dict['version'] = 1.0
+        file_dict['title'] = self.file.title
+        file_dict['url'] = self.file.get_file_url
+        file_dict['provider_name'] = self.get_site_domain
 
-            if self.file.media_type == 1:
-                file_dict['type'] = 'photo'
-                file_dict['width'] = 240
-                file_dict['height'] = 160
+        if self.file.media_type == File.MEDIA_TYPE.IMAGE:
+            file_dict['type'] = 'photo'
+            file_dict['width'] = 240
+            file_dict['height'] = 160
 
-            elif self.file.media_type == 2:
-                file_dict['type'] = 'video'
-                file_dict['html'] = self.file.upload_embed_link
-                file_dict['height'] = 350
-                file_dict['width'] = 700
+        elif self.file.media_type == File.MEDIA_TYPE.VIDEO:
+            file_dict['type'] = 'video'
+            file_dict['html'] = self.file.oembed_html
+            file_dict['height'] = 350
+            file_dict['width'] = 700
 
-            file_dict['version'] = 1.0
-            file_dict['title'] = self.file.name_of_file
-            file_dict['url'] = self.file.upload_url
-            file_dict['provider_name'] = 'Django_Mesh'
-            json_response.append(file_dict)
-            return HttpResponse(json.dumps(json_response), content_type="application/json")
-
-        response = super(OembedDetailView, self).dispatch(request, *args, **kwargs)
-        return response
+        return HttpResponse(json.dumps([file_dict]), content_type="application/json")

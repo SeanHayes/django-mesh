@@ -7,10 +7,10 @@
 
     {% for file in file_list %}
         <div>
-            <a href="{% url 'mesh_file_view' slug=file.slug %}">{{ file.name_of_file|safe }}</a>
+            <a href="{% url 'mesh_file_view' slug=file.slug %}">{{ file.title|safe }}</a>
             <div class="container2">
 
-            <p> <embed src="{{ file.upload_url }}" autoplay="false" height="120" width="200">
+            <p> <embed src="{{ file.get_file_url }}" autoplay="false" height="120" width="200">
             </p>
         </div></div>
     {% endfor %}

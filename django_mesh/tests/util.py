@@ -183,30 +183,34 @@ class BaseTestCase(TestCase):
 
         self.f1 = File(
             slug = 'file',
+            title='f1',
             upload_file = '/upload/f1',
-            name_of_file = 'file',
+
             media_type = 1
         )
 
         self.f2 = File(
             slug = 'file2',
             upload_file = '/upload/f2',
-            name_of_file = 'file2',
-            media_type = 1
+
+            media_type = 1,
+            title='f2',
         )
 
         self.f3 = File(
             slug = 'file3',
             upload_file = '/upload/f3',
-            name_of_file = 'file3',
-            media_type = 1
+
+            media_type = 1,
+            title='f3',
         )
 
         self.f4 = File(
             slug = 'video-type',
             upload_file = '/upload/f4',
-            name_of_file = 'video type',
-            media_type = 2
+
+            media_type = 2,
+            title='f4',
         )
 
         self.t5 = Tag(

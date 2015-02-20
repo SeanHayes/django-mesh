@@ -199,7 +199,7 @@ class MockYoutube(models.Model):
     yoj = models.TextField(default='')
 
 
-class File(models.Model):
+class File(_Abstract):
 
     MEDIA_TYPE = Choices(
         (0, 'NONE',       'none',),
@@ -210,28 +210,33 @@ class File(models.Model):
     channel = models.ForeignKey(Channel)
     objects = FileQuerySet.as_manager()
 
-    slug = models.SlugField(unique=True)
 
     upload_file = models.FileField(upload_to='uploads/%Y/%m/%d')
-    name_of_file = models.CharField(max_length=120, blank=False, unique=True)
+
     media_type = models.IntegerField(max_length=1, default=MEDIA_TYPE.NONE, choices=MEDIA_TYPE)
-    upload_url = models.CharField(max_length=240, default='', blank=True)
-    upload_embed_link = models.TextField(default='', blank=True)
+
+
+
+    oembed_html = models.TextField(default='', blank=True)
+
+    @property    
+    def get_file_url(self):
+        return self.upload_file.url
 
     def render(self):
-        self.upload_url = "http://localhost:8000"+self.upload_file.url
+
         embed = ''
 
-        if self.media_type == 0:
+        if self.media_type == File.MEDIA_TYPE.NONE:
             pass
 
-        elif self.media_type == 1:
-            embed = '<img src="'+self.upload_url+'" style="width:100%;height:100%;>'
+        elif self.media_type == File.MEDIA_TYPE.IMAGE:
+            embed = '<img src="'+self.get_file_url+'" style="width:100%;height:100%;>'
 
-        elif self.media_type == 2:
-            embed = '<video width="700" height="350" controls> <source src="'+self.upload_url+'" type="video/mp4"> Your browser does not support the video tag. </video>'
+        elif self.media_type == File.MEDIA_TYPE.VIDEO:
+            embed = '<video width="700" height="350" controls> <source src="'+self.get_file_url+'" type="video/mp4"> Your browser does not support the video tag. </video>'
 
-        self.upload_embed_link = embed
+        self.oembed_html = embed
 
     def get_absolute_url(self):
         return reverse('mesh_file_view', args=(self.slug,))
