@@ -225,7 +225,7 @@ class File(_Abstract):
 
     def render(self):
 
-        embed = ''
+        embed = '<a href="'+self.get_file_url+'"> %s </a>' % self.get_file_url
 
         if self.media_type == File.MEDIA_TYPE.NONE:
             pass
