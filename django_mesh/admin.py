@@ -18,7 +18,7 @@
 from django.contrib import admin
 
 # App imports
-from .models import Channel, Post, Tag
+from .models import Channel, Post, Tag, Media
 
 class ChannelAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
@@ -43,3 +43,9 @@ class PostAdmin(admin.ModelAdmin):
         return super(PostAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 admin.site.register(Post, PostAdmin)
+
+class MediaAdmin(admin.ModelAdmin):
+    list_display = ('title', 'media_type')
+
+admin.site.register(Media, MediaAdmin)
+

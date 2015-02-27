@@ -22,6 +22,7 @@ from .util import BaseTestCase
 
 # App imports
 from ..models import Post
+import json
 
 class IndexViewTestCase(BaseTestCase):
 
@@ -761,3 +762,75 @@ class TagIndexViewTestCase(BaseTestCase):
         self.assertContains(response, self.t1)
         self.assertNotContains(response, self.t2)
         self.assertContains(response, self.t3)
+
+class MediaIndexViewTestCase(BaseTestCase):
+    def test_upload_shows_up_on_index_page(self):
+        self.c1.save()
+        self.c3.save()
+
+        self.f1.channel = self.c1
+        self.f1.save()
+
+        self.f2.channel = self.c3
+        self.f2.save()
+
+        response = self.client.get(reverse('mesh_media_index'))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.f1.get_file_url)
+        self.assertNotContains(response, self.f2.get_file_url)
+
+class MediaDetailViewTestCase(BaseTestCase):
+    def test_detail_page_only_shows_correct_media(self):
+        self.c1.save()
+        self.c2.save()
+
+        self.f1.channel = self.c1
+        self.f1.save()
+
+        self.f2.channel = self.c2
+        self.f2.save()
+
+        response = self.client.get(reverse('mesh_media_view', kwargs={'slug': self.f1.slug}))
+        self.assertEqual(response.status_code, 200)
+
+        self.assertContains(response, self.f1.get_file_url)
+        self.assertNotContains(response, self.f2.get_file_url)
+
+
+class OembedDetailViewTestCase(BaseTestCase):
+    # def test_post_request_raises_404(self):  ######## you said we dont need to worry about this case right?
+    #     self.c1.save()
+    #     self.f1.channel = self.c1
+    #     self.f1.save()
+
+    #     response = self.client.post(reverse('mesh_oembed', kwargs={'slug': self.f1.slug}))
+    #     self.assertEqual(response.status_code, 404)
+
+    def test_get_request_returns_required_data_for_embedly_for_each_file_type(self):
+        self.c1.save()
+        self.f1.channel = self.c1
+        self.f1.save()
+
+        self.f4.channel = self.c1
+        self.f4.save()
+
+        response = self.client.get(reverse('mesh_oembed', kwargs={'slug': self.f1.slug}))
+        response2 = self.client.get(reverse('mesh_oembed', kwargs={'slug': self.f4.slug}))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response2.status_code, 200)
+
+        self.assertContains(response, '"url": "%(url)s"' %{"url": self.f1.get_file_url})
+        self.assertContains(response, '"type": "photo"')
+        self.assertContains(response, '"version": 1.0' )
+        self.assertContains(response, '"width": 240' )
+        self.assertContains(response, '"height": 160' )
+
+        self.assertContains(response2, '"url": "%(url)s"' %{"url": self.f4.get_file_url})
+        self.assertContains(response2, '"type": "video"')
+        self.assertContains(response2, '"version": 1.0' )
+        self.assertContains(response2, '"width": 700' )
+        self.assertContains(response2, '"height": 350' )
+        self.assertContains(response2, '"html": %(html)s' %{"html": json.dumps(self.f4.oembed_html)})
+

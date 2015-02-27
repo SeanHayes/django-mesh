@@ -15,7 +15,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # App imports
-from ..models import Post, Channel, Tag
+from ..models import Post, Channel, Tag, Media
 
 # Test imports
 from .util import BaseTestCase
@@ -289,3 +289,49 @@ class TagQuerySetTestCase(BaseTestCase):
 
         self.assertIn(self.t1, viewable)
         self.assertNotIn(self.t2, viewable)
+
+
+class MediaQuerySetTestCase(BaseTestCase):
+    def test_get_for_user_with_a_user(self):
+        user = self.user
+
+        self.c1.save() # public
+
+        self.following_private_channel.save() # following private
+        self.following_private_channel.followers.add(user)
+
+        self.c3.save() # private channel that we are not following
+
+        self.f1.channel = self.c1
+        self.f1.save()
+
+        self.f2.channel = self.c3
+        self.f2.save()
+
+        self.f3.channel = self.following_private_channel
+        self.f3.save()
+
+        viewable = Media.objects.get_for_user(user)
+
+        self.assertIn(self.f1, viewable)
+        self.assertIn(self.f3, viewable)
+        self.assertNotIn(self.f2, viewable)
+
+
+    def test_get_for_user_anonymous(self):
+        user = self.user
+        user.id == None
+
+        self.c1.save()
+        self.c3.save()
+
+        self.f1.channel = self.c1
+        self.f2.channel = self.c3
+
+        self.f1.save()
+        self.f2.save()
+
+        viewable = Media.objects.get_for_user(user)
+
+        self.assertIn(self.f1, viewable)
+        self.assertNotIn(self.f2, viewable)
