@@ -18,7 +18,7 @@
 from django.contrib import admin
 
 # App imports
-from .models import Channel, Post, Tag, File
+from .models import Channel, Post, Tag, Media
 
 class ChannelAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
@@ -44,8 +44,8 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Post, PostAdmin)
 
-class FileAdmin(admin.ModelAdmin):
+class MediaAdmin(admin.ModelAdmin):
     list_display = ('title', 'media_type')
 
-admin.site.register(File, FileAdmin)
+admin.site.register(Media, MediaAdmin)
 

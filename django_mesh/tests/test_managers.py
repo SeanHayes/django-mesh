@@ -15,7 +15,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # App imports
-from ..models import Post, Channel, Tag, File
+from ..models import Post, Channel, Tag, Media
 
 # Test imports
 from .util import BaseTestCase
@@ -291,7 +291,7 @@ class TagQuerySetTestCase(BaseTestCase):
         self.assertNotIn(self.t2, viewable)
 
 
-class FileQuerySetTestCase(BaseTestCase):
+class MediaQuerySetTestCase(BaseTestCase):
     def test_get_for_user_with_a_user(self):
         user = self.user
 
@@ -311,7 +311,7 @@ class FileQuerySetTestCase(BaseTestCase):
         self.f3.channel = self.following_private_channel
         self.f3.save()
 
-        viewable = File.objects.get_for_user(user)
+        viewable = Media.objects.get_for_user(user)
 
         self.assertIn(self.f1, viewable)
         self.assertIn(self.f3, viewable)
@@ -331,7 +331,7 @@ class FileQuerySetTestCase(BaseTestCase):
         self.f1.save()
         self.f2.save()
 
-        viewable = File.objects.get_for_user(user)
+        viewable = Media.objects.get_for_user(user)
 
         self.assertIn(self.f1, viewable)
         self.assertNotIn(self.f2, viewable)

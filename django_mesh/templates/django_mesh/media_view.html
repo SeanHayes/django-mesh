@@ -1,0 +1,16 @@
+{% extends "django_mesh/base.html" %}
+
+{% block extra_head %}
+<link rel="alternate" type="application/json" href="{% url 'mesh_oembed' slug=media.slug %}" title="{{ media.title }}"></link>
+{% endblock %}
+
+{% block content %}
+
+<div class="media_list">
+    {% ifequal media.media_type 1 %}
+        <a href="{{ media.get_file_url }}"> {{ media.oembed_html | safe}}</a>
+    {% else %}
+        {{ media.oembed_html | safe}}
+    {% endifequal %}
+
+{% endblock content %}

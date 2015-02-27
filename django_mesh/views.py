@@ -29,7 +29,7 @@ from django.contrib.sites.shortcuts import get_current_site
 import json
 
 # App imports
-from .models import Channel, Post, Tag, File
+from .models import Channel, Post, Tag, Media
 
 #test upload
 from django.shortcuts import render_to_response
@@ -139,21 +139,21 @@ class TagIndexView(ListView):
         qs = super(TagIndexView, self).get_queryset(*args, **kwargs)
         return qs.get_for_user(self.request.user)
 
-class FileDetailView(DetailView):
-    model = File
-    template_name = 'django_mesh/file_view.html'
+class MediaDetailView(DetailView):
+    model = Media
+    template_name = 'django_mesh/media_view.html'
 
     def get_queryset(self, *args, **kwargs):
-        qs = super(FileDetailView, self).get_queryset(*args, **kwargs)
+        qs = super(MediaDetailView, self).get_queryset(*args, **kwargs)
         return qs.get_for_user(self.request.user)
 
 
-class FileIndexView(ListView):
-    model = File
-    template_name = 'django_mesh/file_index_view.html'
+class MediaIndexView(ListView):
+    model = Media
+    template_name = 'django_mesh/media_index_view.html'
 
     def get_queryset(self, *args, **kwargs):
-        qs = super(FileIndexView, self).get_queryset(*args, **kwargs)
+        qs = super(MediaIndexView, self).get_queryset(*args, **kwargs)
         return qs.get_for_user(self.request.user)
 
 def self_enrollment(request, *args, **kwargs):
@@ -167,7 +167,7 @@ def self_enrollment(request, *args, **kwargs):
 
 class OembedDetailView(DetailView):
 
-    model = File
+    model = Media
 
     @property
     def get_site_domain(request):
@@ -175,25 +175,25 @@ class OembedDetailView(DetailView):
 
 
     def dispatch(self, request, *args, **kwargs):
-        self.file = get_object_or_404(File.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+        self.media = get_object_or_404(Media.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
 
         user = request.user
 
         file_dict = {}
 
         file_dict['version'] = 1.0
-        file_dict['title'] = self.file.title
-        file_dict['url'] = self.file.get_file_url
+        file_dict['title'] = self.media.title
+        file_dict['url'] = self.media.get_file_url
         file_dict['provider_name'] = self.get_site_domain
 
-        if self.file.media_type == File.MEDIA_TYPE.IMAGE:
+        if self.media.media_type == Media.MEDIA_TYPE.IMAGE:
             file_dict['type'] = 'photo'
             file_dict['width'] = 240
             file_dict['height'] = 160
 
-        elif self.file.media_type == File.MEDIA_TYPE.VIDEO:
+        elif self.media.media_type == Media.MEDIA_TYPE.VIDEO:
             file_dict['type'] = 'video'
-            file_dict['html'] = self.file.oembed_html
+            file_dict['html'] = self.media.oembed_html
             file_dict['height'] = 350
             file_dict['width'] = 700
 

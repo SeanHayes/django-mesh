@@ -21,8 +21,7 @@ import six
 # Django imports
 #from django.contrib.sitemaps import ping_google
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.html import escape
-
+from django.utils.html import escape 
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -38,7 +37,7 @@ from pyembed.core import PyEmbed
 from bs4 import BeautifulSoup
 
 # App imports
-from .managers import PostQuerySet, ChannelQuerySet, TagQuerySet, FileQuerySet
+from .managers import PostQuerySet, ChannelQuerySet, TagQuerySet, MediaQuerySet
 
 # URL_REGEX = r"""(?i)\b((?:https?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)/)(?:[^\s()<>{}\[\]]+|\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\))+(?:\([^\s()]*?\([^\s()]+\)[^\s()]*?\)|\([^\s]+?\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:(?<!@)[a-z0-9]+(?:[.\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\b/?(?!@)))"""
 URL_REGEX = r"""http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"""
@@ -199,7 +198,7 @@ class MockYoutube(models.Model):
     yoj = models.TextField(default='')
 
 
-class File(_Abstract):
+class Media(_Abstract):
 
     MEDIA_TYPE = Choices(
         (0, 'NONE',       'none',),
@@ -208,7 +207,7 @@ class File(_Abstract):
     )
 
     channel = models.ForeignKey(Channel)
-    objects = FileQuerySet.as_manager()
+    objects = MediaQuerySet.as_manager()
 
 
     upload_file = models.FileField(upload_to='uploads/%Y/%m/%d')
@@ -227,21 +226,18 @@ class File(_Abstract):
 
         embed = '<a href="'+self.get_file_url+'"> %s </a>' % self.get_file_url
 
-        if self.media_type == File.MEDIA_TYPE.NONE:
-            pass
-
-        elif self.media_type == File.MEDIA_TYPE.IMAGE:
+        if self.media_type == Media.MEDIA_TYPE.IMAGE:
             embed = '<img src="'+self.get_file_url+'" style="width:100%;height:100%;>'
 
-        elif self.media_type == File.MEDIA_TYPE.VIDEO:
+        elif self.media_type == Media.MEDIA_TYPE.VIDEO:
             embed = '<video width="700" height="350" controls> <source src="'+self.get_file_url+'" type="video/mp4"> Your browser does not support the video tag. </video>'
 
         self.oembed_html = embed
 
     def get_absolute_url(self):
-        return reverse('mesh_file_view', args=(self.slug,))
+        return reverse('mesh_media_view', args=(self.slug,))
 
     def save(self, *args, **kwargs):
         self.render()
-        super(File, self).save(*args, **kwargs)
+        super(Media, self).save(*args, **kwargs)
 
