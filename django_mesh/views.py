@@ -23,10 +23,19 @@ from django.views.generic.list import ListView
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.contrib.sites.shortcuts import get_current_site
+from django.forms.models import model_to_dict
+
+import json
 
 # App imports
-from .models import Channel, Post, Tag
+from .models import Channel, Post, Tag, Media
+
+#test upload
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.core.urlresolvers import reverse, resolve
 
 logger = logging.getLogger(__name__)
 
@@ -94,15 +103,6 @@ class PostDetailView(DetailView):
         ret = super(PostDetailView, self).get_queryset(*args, **kwargs)
         return ret.get_for_user(user=self.request.user).active()
 
-def self_enrollment(request, *args, **kwargs):
-    user = request.user
-    if request.method == 'POST':
-        channel = get_object_or_404(Channel.objects.get_for_user(user), slug=kwargs['slug'])
-        channel.followers.add(user)
-        return HttpResponseRedirect(reverse('mesh_channel_index'))
-    else:
-        return HttpResponseRedirect(reverse('mesh_channel_index'))
-
 class TagDetailView(ListView):
     model = Post
     template_name = 'django_mesh/tag_view.html'
@@ -136,3 +136,67 @@ class TagIndexView(ListView):
     def get_queryset(self, *args, **kwargs):
         qs = super(TagIndexView, self).get_queryset(*args, **kwargs)
         return qs.get_for_user(self.request.user)
+
+class MediaDetailView(DetailView):
+    model = Media
+    template_name = 'django_mesh/media_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MediaDetailView, self).get_context_data(**kwargs)
+        context['Media'] = self.model
+        return context
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(MediaDetailView, self).get_queryset(*args, **kwargs)
+        return qs.get_for_user(self.request.user)
+
+class MediaIndexView(ListView):
+    model = Media
+    template_name = 'django_mesh/media_index_view.html'
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(MediaIndexView, self).get_queryset(*args, **kwargs)
+        return qs.get_for_user(self.request.user)
+
+def self_enrollment(request, *args, **kwargs):
+    user = request.user
+    if request.method == 'POST':
+        channel = get_object_or_404(Channel.objects.get_for_user(user), slug=kwargs['slug'])
+        channel.followers.add(user)
+        return HttpResponseRedirect(reverse('mesh_channel_index'))
+    else:
+        return HttpResponseRedirect(reverse('mesh_channel_index'))
+
+class OembedDetailView(DetailView):
+
+    model = Media
+
+    @property
+    def get_site_domain(request):
+        return get_current_site(request).domain
+
+
+    def dispatch(self, request, *args, **kwargs):
+        self.media = get_object_or_404(Media.objects.get_for_user(user=self.request.user), slug=self.kwargs['slug'])
+
+        user = request.user
+
+        file_dict = {}
+
+        file_dict['version'] = 1.0
+        file_dict['title'] = self.media.title
+        file_dict['url'] = self.media.file_url
+        file_dict['provider_name'] = self.get_site_domain
+
+        if self.media.media_type == Media.MEDIA_TYPES.IMAGE:
+            file_dict['type'] = 'photo'
+            file_dict['width'] = 240
+            file_dict['height'] = 160
+
+        elif self.media.media_type == Media.MEDIA_TYPES.VIDEO:
+            file_dict['type'] = 'video'
+            file_dict['html'] = self.media.oembed_html
+            file_dict['height'] = 350
+            file_dict['width'] = 700
+
+        return HttpResponse(json.dumps([file_dict]), content_type="application/json")
