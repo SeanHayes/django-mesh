@@ -21,7 +21,7 @@ import six
 # Django imports
 #from django.contrib.sitemaps import ping_google
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.html import escape 
+
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
@@ -196,7 +196,6 @@ class MockYoutube(models.Model):
     yoh = models.CharField(max_length=140, unique=True)
     yot = models.TextField(default='')
     yoj = models.TextField(default='')
-
 
 class Media(_Abstract):
 
