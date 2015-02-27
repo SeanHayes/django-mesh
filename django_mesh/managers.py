@@ -51,7 +51,7 @@ class TagQuerySet(QuerySet):
 
         return self.filter(q_object).distinct().filter(post__published__lte=timezone.now())
 
-class FileQuerySet(QuerySet):
+class MediaQuerySet(QuerySet):
     def get_for_user(self, user):
 
         q_object = Q(channel__public=True)

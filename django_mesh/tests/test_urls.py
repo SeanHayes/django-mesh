@@ -763,7 +763,7 @@ class TagIndexViewTestCase(BaseTestCase):
         self.assertNotContains(response, self.t2)
         self.assertContains(response, self.t3)
 
-class FileIndexViewTestCase(BaseTestCase):
+class MediaIndexViewTestCase(BaseTestCase):
     def test_upload_shows_up_on_index_page(self):
         self.c1.save()
         self.c3.save()
@@ -774,14 +774,14 @@ class FileIndexViewTestCase(BaseTestCase):
         self.f2.channel = self.c3
         self.f2.save()
 
-        response = self.client.get(reverse('mesh_file_index'))
+        response = self.client.get(reverse('mesh_media_index'))
         self.assertEqual(response.status_code, 200)
 
         self.assertContains(response, self.f1.get_file_url)
         self.assertNotContains(response, self.f2.get_file_url)
 
-class FileDetailViewTestCase(BaseTestCase):
-    def test_detail_page_only_shows_correct_file(self):
+class MediaDetailViewTestCase(BaseTestCase):
+    def test_detail_page_only_shows_correct_media(self):
         self.c1.save()
         self.c2.save()
 
@@ -791,7 +791,7 @@ class FileDetailViewTestCase(BaseTestCase):
         self.f2.channel = self.c2
         self.f2.save()
 
-        response = self.client.get(reverse('mesh_file_view', kwargs={'slug': self.f1.slug}))
+        response = self.client.get(reverse('mesh_media_view', kwargs={'slug': self.f1.slug}))
         self.assertEqual(response.status_code, 200)
 
         self.assertContains(response, self.f1.get_file_url)
