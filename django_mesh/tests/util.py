@@ -185,14 +185,16 @@ class BaseTestCase(TestCase):
             slug = 'file',
             title='f1',
             upload_file = '/upload/f1',
-
+            media_height = 100,
+            media_width = 100,
             media_type = 1
         )
 
         self.f2 = Media(
             slug = 'file2',
             upload_file = '/upload/f2',
-
+            media_height = 100,
+            media_width = 100,
             media_type = 1,
             title='f2',
         )
@@ -200,7 +202,8 @@ class BaseTestCase(TestCase):
         self.f3 = Media(
             slug = 'file3',
             upload_file = '/upload/f3',
-
+            media_height = 100,
+            media_width = 100,
             media_type = 1,
             title='f3',
         )
@@ -208,7 +211,8 @@ class BaseTestCase(TestCase):
         self.f4 = Media(
             slug = 'video-type',
             upload_file = '/upload/f4',
-
+            media_height = 100,
+            media_width = 100,
             media_type = 2,
             title='f4',
         )

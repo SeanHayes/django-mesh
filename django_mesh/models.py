@@ -207,12 +207,14 @@ class Media(_Abstract):
     channel = models.ForeignKey(Channel)
     objects = MediaQuerySet.as_manager()
 
-
     upload_file = models.FileField(upload_to='uploads/%Y/%m/%d')
 
     media_type = models.IntegerField(max_length=1, default=MEDIA_TYPES.NONE, choices=MEDIA_TYPES)
 
     oembed_html = models.TextField(default='', blank=True)
+
+    media_height = models.SmallIntegerField(null=True)
+    media_width = models.SmallIntegerField(null=True)
 
     @property    
     def file_url(self):
@@ -223,10 +225,10 @@ class Media(_Abstract):
         embed = '<a href="%s"> %s </a>' % (self.file_url, self.file_url)
 
         if self.media_type == Media.MEDIA_TYPES.IMAGE:
-            embed = '<img src="%s" style="width:100%%; height:100%%;>' % (self.file_url)
+            embed = '<img src="%s" style="width:%d%%; height:%d%%;>' % (self.file_url, self.media_width, self.media_height)
 
         elif self.media_type == Media.MEDIA_TYPES.VIDEO:
-            embed = '<video width="700" height="350" controls> <source src="%s" type="video/mp4"> Your browser does not support the video tag. </video>' % (self.file_url)
+            embed = '<video width="%d" height="%d" controls> <source src="%s" type="video/mp4"> Your browser does not support the video tag. </video>' % (self.media_width, self.media_height, self.file_url)
 
         self.oembed_html = embed
 
