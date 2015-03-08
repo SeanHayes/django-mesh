@@ -216,6 +216,9 @@ class Media(_Abstract):
     media_height = models.SmallIntegerField(null=True)
     media_width = models.SmallIntegerField(null=True)
 
+    thumbnail_height = models.SmallIntegerField(default=120)
+    thumbnail_width = models.SmallIntegerField(default=200)
+
     @property    
     def file_url(self):
         return self.upload_file.url

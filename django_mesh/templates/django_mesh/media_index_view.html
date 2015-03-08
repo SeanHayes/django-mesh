@@ -10,7 +10,7 @@
             <a href="{% url 'mesh_media_view' slug=media.slug %}">{{ media.title|safe }}</a>
             <div class="container2">
 
-            <p> <embed src="{{ media.file_url }}" autoplay="false" height="120" width="200">
+            <p> <embed src="{{ media.file_url }}" autoplay="false" height="{{ media.thumbnail_height }}" width="{{ media.thumbnail_width }}">
             </p>
         </div></div>
     {% endfor %}
