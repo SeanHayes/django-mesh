@@ -17,7 +17,7 @@
 #Django imports
 from django.conf.urls import patterns, url
 
-from .views import IndexView, ChannelIndexView, ChannelDetailView, PostIndexView, PostDetailView, TagDetailView, TagIndexView
+from .views import IndexView, ChannelIndexView, ChannelDetailView, PostIndexView, PostDetailView, TagDetailView, TagIndexView, MediaDetailView, MediaIndexView, OembedDetailView
 from django_mesh import views
 
 urlpatterns = patterns('',
@@ -29,4 +29,7 @@ urlpatterns = patterns('',
     url(r'^tags/(?P<slug>.*)/$' , TagDetailView.as_view(), name="mesh_tag_view"),
     url(r'^posts/(?P<slug>.*)/$', PostDetailView.as_view(), name="mesh_post_view"),
     url(r'^tags/$', TagIndexView.as_view(), name="mesh_tag_index"),
+    url(r'^media/$', MediaIndexView.as_view(), name="mesh_media_index"),
+    url(r'^media/(?P<slug>.*)/$', MediaDetailView.as_view(), name="mesh_media_view"),
+    url(r'^oembed/media/(?P<slug>.*)/$', OembedDetailView.as_view(), name="mesh_oembed"),
 )

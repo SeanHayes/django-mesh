@@ -16,6 +16,7 @@
 
 # Test imports
 from .util import BaseTestCase
+
 import markdown, textile
 import requests
 from pyembed.markdown import PyEmbedMarkdown
@@ -25,6 +26,9 @@ from .youtube_data import get_mock, get_mock_no_oembed
 from django.core.urlresolvers import reverse
 
 from mock import patch, Mock
+
+from django.core.files import File
+from django.core.files.storage import Storage
 
 
 
@@ -193,3 +197,15 @@ class TagTestCase(BaseTestCase):
         self.t1.save()
         returned_title = str(self.t1)
         self.assertEqual(self.t1.title, returned_title)
+
+class MediaTestCase(BaseTestCase):
+    def test_get_absolute_url(self):
+
+        self.c1.save()
+        self.f1.channel = self.c1
+
+        self.f1.save()
+        url = self.f1.get_absolute_url()
+
+        self.assertGreater(len(url), 0)
+    # blank slug isn't allowed so only have to test with slug

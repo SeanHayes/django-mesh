@@ -27,7 +27,7 @@ from django.utils import timezone
 
 #App imports
 from .. import models
-from ..models import Channel, Post, Tag
+from ..models import Channel, Post, Tag, Media
 
 class BaseTestCase(TestCase):
     def setUp(self):
@@ -178,7 +178,43 @@ class BaseTestCase(TestCase):
         self.t4 = Tag(
             slug='slug-for-a-tag-4',
             title='title for a tag 4',
-            text=' this is tag 4s text',
+            text=' this is tag 4s text'
+        )
+
+        self.f1 = Media(
+            slug = 'file',
+            title='f1',
+            upload_file = '/upload/f1',
+            media_height = 100,
+            media_width = 100,
+            media_type = 1
+        )
+
+        self.f2 = Media(
+            slug = 'file2',
+            upload_file = '/upload/f2',
+            media_height = 100,
+            media_width = 100,
+            media_type = 1,
+            title='f2',
+        )
+
+        self.f3 = Media(
+            slug = 'file3',
+            upload_file = '/upload/f3',
+            media_height = 100,
+            media_width = 100,
+            media_type = 1,
+            title='f3',
+        )
+
+        self.f4 = Media(
+            slug = 'video-type',
+            upload_file = '/upload/f4',
+            media_height = 100,
+            media_width = 100,
+            media_type = 2,
+            title='f4',
         )
 
         self.t5 = Tag(
