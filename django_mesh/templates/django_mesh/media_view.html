@@ -9,7 +9,7 @@
 <div class="media_list">
     {% if Media.MEDIA_TYPES.IMAGE %}
 
-    <a href="{{ media.file_url }}"> <img src="{{ media.file_url }}" alt="{{ media.title }}"> </a>
+    <a href="{{ media.file_url }}"> {{ media.oembed_html|safe }} </a>
     {% else %}
         {{ media.oembed_html | safe}}
     {% endif %}
